@@ -13,7 +13,7 @@ LINKER = gfortran
 
 BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none
 
-DEBUG_OPTS = -g -fbacktrace -O0 -fcheck=all
+DEBUG_OPTS = -g -O0 -fcheck=all
 TRAP_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,precision,denormal
 FAST_OPTS = -O3 -march=native -m64 -Ofast
 

@@ -1,11 +1,7 @@
-commit 2b76ea390c4b4c48645e4dc04c418889e29e7886
-Date: Tue Jan 15 18:12:56 2019 -0200## master
+commit 48ff98c6a22f2cdfd501ee3f8b895eb0f8c2819f
+Date: Tue Jan 15 18:51:59 2019 -0200## master...origin/master
  M Makefile
+ M bin/main.elf
  M obj/main.o
- M obj/module1.mod
  M obj/module1.o
  M obj/version.txt
- D run/main.elf
- M src/main.f90
- M src/module1.f90
-?? bin/
