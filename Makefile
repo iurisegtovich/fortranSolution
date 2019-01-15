@@ -2,6 +2,7 @@
 #   Build the "debug" version with: `make` or `make mode=DEBUG`
 #   Build the "trap" version with: `make mode=TRAP`
 #   Build the "fast" version with: `make mode=FAST`
+mode ?= DEBUG
 
 #   Build the "static" version with: `make static=TRUE`
 static ?= FALSE
@@ -18,12 +19,12 @@ FAST_OPTS = -O3 -march=native -m64 -Ofast
 
 LINK_OPTS = -fbacktrace
 
-ifeq ($(mode), DEBUG)
-  FCOPTS = $(BASIC_F_OPTS) $(DEBUG_F_OPTS)
+ifeq ($(mode),DEBUG)
+  FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS)
 else ifeq ($(mode), TRAP)
-  FCOPTS = $(BASIC_F_OPTS) $(TRAP_F_OPTS)
+  FCOPTS = $(BASIC_OPTS) $(TRAP_OPTS)
 else ifeq ($(mode), FAST)
-  FCOPTS = $(BASIC_F_OPTS) $(FAST_F_OPTS)
+  FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
 else
   #mode=DEBUG or mode=FAST or mode=TRAP
 endif
@@ -31,7 +32,7 @@ endif
 ifeq ($(static), TRUE)
   FLOPTS = $(LINK_OPTS) -static
 else ifeq ($(static), FALSE)
-  FLOPTS = $(LINK_OPTS) -static
+  FLOPTS = $(LINK_OPTS)
 else
   #static=TRUE or static=FALSE
 endif

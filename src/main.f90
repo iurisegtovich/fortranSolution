@@ -9,8 +9,10 @@ PROGRAM main
 
 CONTAINS
 
-  subroutine subS1()
-  
+  subroutine subS1(j,y)
+    integer, intent(in) :: j
+    real(REAL64), intent(out) :: y
+    y = 2.d0**j
   end subroutine
   
-END PROGRAM main_standalone
+END PROGRAM main

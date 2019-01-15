@@ -1,0 +1,7 @@
+commit 205dea79417a37fb8ecbe9fe4a5cfe3b7ce06761
+Date: Tue Jan 15 17:59:35 2019 -0200## master
+ M Makefile
+ M src/main.f90
+ M src/module1.f90
+?? obj/
+?? run/
