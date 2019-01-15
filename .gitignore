@@ -1,0 +1,8 @@
+bin/**
+!bin/README.md
+
+obj/**
+!obj/README.md
+
+output/**
+!output/README.md
