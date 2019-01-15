@@ -22,7 +22,7 @@ LINK_OPTS = -fbacktrace
 ifeq ($(mode),DEBUG)
   FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS)
 else ifeq ($(mode), TRAP)
-  FCOPTS = $(BASIC_OPTS) $(TRAP_OPTS)
+  FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS) $(TRAP_OPTS)
 else ifeq ($(mode), FAST)
   FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
 else
@@ -42,18 +42,19 @@ endif
 #Target directories.
 OBJDIR = obj
 SRCDIR = src
-RUNDIR = run
+BINDIR = bin
 
 OBJS = \
 	$(OBJDIR)/main.o \
 	$(OBJDIR)/module1.o \
 
-.DEFAULT_GOAL := $(RUNDIR)/main.elf
+.DEFAULT_GOAL := $(BINDIR)/main.elf
 
 clean: .FORCE
-	rm -f $(RUNDIR)/*.elf
+	rm -f $(BINDIR)/*.elf
 	rm -f $(OBJDIR)/*.o
 	rm -f $(OBJDIR)/*.mod
+	rm -f $(OBJDIR)/version.txt
 
 #objects
 $(OBJDIR)/main.o: $(SRCDIR)/main.f90 $(OBJDIR)/module1.o
@@ -63,15 +64,15 @@ $(OBJDIR)/module1.o: $(SRCDIR)/module1.f90
 	$(COMPILER) $(FCOPTS) -J$(OBJDIR) -c $< -o $@
 
 #elfs
-$(RUNDIR)/main.elf: $(OBJS)
+$(BINDIR)/main.elf: $(OBJS)
 	make $(OBJDIR)/version.txt
 	$(LINKER) $(FLOPTS) $^ -o $@
 
 #public targets
-run: $(RUNDIR)/main.elf .FORCE
-	$(RUNDIR)/main.elf
+run: $(BINDIR)/main.elf .FORCE
+	$(BINDIR)/main.elf
 
-memcheck: $(RUNDIR)/main.elf .FORCE
+memcheck: $(BINDIR)/main.elf .FORCE
 	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes $^
 
 $(OBJDIR)/version.txt: .FORCE
