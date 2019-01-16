@@ -1,38 +1,36 @@
-# Para executar as receitas e construir o programa (padrão: modo debug) basta digitar
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Instruções
+
+# Para executar as receitas e construir o programa basta digitar
 ## make
+
+# Para forçar recompilar todos os arquivos do projeto,
+# independentemente da verificação de hora de modificação
+## make -B
 
 # Para apagar todos os arquivos objeto temporários e programa final
 ## make clean
 
-# Para utilizar configurações avançadas de trap de cálculos numéricos (infinity, nan, ...), construir no modo trap, basta digitar
-## make -B mode=TRAP
-
-# Para utilizar configurações avançadas de aceleração de cálculos numéricos, construir no modo fast, basta digitar
-## make -B mode=FAST
-
-### A flag -B é usada para forçar recompilar todos os arquivos do projeto no modo desejado
-
-# Para compilar uma versão standalone que pode ser distribuída para outras máquinas sem a instalação da toolchain gfortran nelas, construir com a flag static=TRUE, basta digitar
-## make static=TRUE
-
-# Para (re-compilar e) rodar o programa
+# Para (re-)compilar e rodar o programa
 ## make run
-### vale para qualquer mode 
 
-# Para (re-compilar e) rodar o programa no modo de verificação de memória
+# Para (re-)compilar e rodar o programa no modo de verificação de memória
 ## make memcheck
-### configurada para usar mode=DEBUG e static=FALSE
 
-# Para (re-compilar e) rodar o programa no modo de debug step-by-step
+# Para (re-)compilar e rodar o programa no modo de debug step-by-step
 ## make debug
-### configurada para usar mode=DEBUG e static=FALSE
 
-# -------------------------------------------------------------------------------------------------------------------
+# Para (re-)compilar e rodar o programa no modo de debug step-by-step
+## make debug
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Arquivos e receitas do projeto:
 
 ## Receita para o programa final:
 bin/main.elf: obj/main.o obj/module1.o
-	make bin/version.txt
+	make version
 	$(LINKER) $(FLOPTS) $^ -o $@
 
 ## Receita para cada objeto:
@@ -42,26 +40,42 @@ obj/main.o: src/main.f90 obj/module1.o Makefile
 obj/module1.o: src/module1.f90 Makefile
 	$(COMPILER) $(FCOPTS) -Jobj -c $< -o $@
 
-# -------------------------------------------------------------------------------------------------------------------
-# Configurações avançadas do Makefile:
+#obj/module2.o: src/module2.f90 obj/module1.o Makefile
+#	$(COMPILER) $(FCOPTS) -Jobj -c $< -o $@
 
-#Compiler and linker
-COMPILER = gfortran
-LINKER = gfortran
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Makefile keywords
 
-DEBUG_OPTS = -O0 -fcheck=all
-TRAP_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,precision,denormal
-FAST_OPTS = -O3 -march=native -m64 -Ofast
+build: .FORCE
+	make bin/main.elf mode=$(mode)
+	#done
 
-LINK_OPTS = -fbacktrace
+run: .FORCE
+	make bin/main.elf mode=$(mode)
+	./bin/main.elf
 
-.DEFAULT_GOAL := bin/main.elf
+debug: .FORCE
+	make bin/main.elf mode=DEBUG
+	# - - - - - - - - - - - - - - - - - - - - - - - #
+	# gdb CheatSheet:                               #
+	#                                               #
+	# > start                                       #
+	# > s                 #(step)                   #
+	# > break main.f90:15 #(set breakpoint)         #
+	# > c                 #(continue)               #
+	# > n                 #(next)                   #
+	# > p x               #(print x)                #
+	# > finish #(step out)                          #
+	# > q #(quit)                                   #
+	#                                               #
+	# > - - - - - - - - - - - - - - - - - - - - - - #
+	gdb bin/main.elf
 
-# -------------------------------------------------------------------------------------------------------------------
-# public targets
-.PHONY: .FORCE
+memcheck: .FORCE
+	make bin/main.elf mode=DEBUG
+	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes bin/main.elf
 
 clean: .FORCE
 	rm -f bin/*.elf
@@ -69,52 +83,62 @@ clean: .FORCE
 	rm -f obj/*.mod
 	rm -f bin/version.txt
 
-run: bin/main.elf .FORCE
-	./bin/main.elf
-
-debug: .FORCE
-	make bin/main.elf mode=SAFE static=FALSE 
-	#cheat:
-	# > start                                        <
-	# > s (step)                                     <
-	# > break 15                                     <
-	# > c (continue)                                 <
-	# > n (next)                                     <
-	# > break module1.f90:12                         <
-	# > p k (print (value of variable k))            <
-	# > finish (step out)                            <
-	# > q (quit)                                     <
-	gdb bin/main.elf
-
-memcheck: .FORCE
-	make bin/main.elf mode=SAFE static=FALSE 
-	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes bin/main.elf
-
-bin/version.txt: .FORCE
+version: .FORCE
 	git log -1 --pretty=format:"commit %H%n" > bin/version.txt #hash
 	git log -1 --pretty=format:"Date: %ad%n" >> bin/version.txt #date
-	git status -sb >> bin/version.txt
+	git status -sb >> bin/version.txt #status
 
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# -------------------------------------------------------------------------------------------------------------------
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Configurações globais do Makefile:
 
-mode ?= SAFE
-static ?= FALSE
-ifeq ($(mode),SAFE)
+#Compiler and linker
+COMPILER = gfortran
+LINKER = gfortran
+
+#flags for each mode
+BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g
+
+DEBUG_OPTS = -O0 -fcheck=all
+
+TRAP_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,precision,denormal
+
+FAST_OPTS = -O3 -march=native -m64 -Ofast
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Lógica de seleção de modos de construção
+
+#default mode
+mode ?= DEBUG
+#selection
+ifeq ($(mode),DEBUG)
   FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS)
-else ifeq ($(mode), TRAP)
+  LINK_OPTS = -fbacktrace
+else ifeq ($(mode),TRAP)
   FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS) $(TRAP_OPTS)
-else ifeq ($(mode), FAST)
+  LINK_OPTS = -fbacktrace
+else ifeq ($(mode),FAST)
   FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
+  LINK_OPTS =
+else ifeq ($(mode),RELEASE)
+  FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
+  LINK_OPTS = -static
 else
-  #mode=SAFE or mode=FAST or mode=TRAP
+  $(error mode value - "mode=DEBUG" or "mode=FAST" or "mode=TRAP")
 endif
 
-ifeq ($(static), TRUE)
-  FLOPTS = $(LINK_OPTS) -static
-else ifeq ($(static), FALSE)
-  FLOPTS = $(LINK_OPTS)
-else
-  #static=TRUE or static=FALSE
-endif
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Configurações globais para as regras de construção
+
+#default target keyword
+.DEFAULT_GOAL := build
+
+# phony target .FORCE to force executing keyword recipes ignoring like-named files
+.PHONY: .FORCE
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
