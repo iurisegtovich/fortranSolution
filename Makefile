@@ -77,5 +77,5 @@ memcheck: $(BINDIR)/main.elf .FORCE
 
 $(OBJDIR)/version.txt: .FORCE
 	git log -1 --pretty=format:"commit %H%n" > $(OBJDIR)/version.txt #hash
-	git log -1 --pretty=format:"Date: %ad" >> $(OBJDIR)/version.txt #date
+	git log -1 --pretty=format:"Date: %ad%n" >> $(OBJDIR)/version.txt #date
 	git status -sb >> $(OBJDIR)/version.txt
