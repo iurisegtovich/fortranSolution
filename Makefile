@@ -146,7 +146,7 @@ else ifeq ($(mode),fast)
   FCOPTS = $(BASIC_OPTS) $(fast_OPTS)
   LINK_OPTS = 
 else ifeq ($(mode),release)
-  FCOPTS = $(BASIC_OPTS) $(fast_OPTS)
+  FCOPTS = $(BASIC_OPTS)
   LINK_OPTS = -static
 else
   $(error mode value - "mode=debug" or "mode=fast" or "mode=trap")
