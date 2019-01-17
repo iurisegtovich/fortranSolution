@@ -52,6 +52,7 @@ $(mode)/obj/module1.o: src/module1.f90 Makefile
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Makefile keywords
 
@@ -106,7 +107,8 @@ LINKER = gfortran
 #flags for each mode
 BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts
 
-debug_OPTS = -O0 -fcheck=all -fbacktrace
+debug_OPTS = -O0 -fbacktrace -fcheck=bounds -fcheck=array-temps -fcheck=do -fcheck=mem
+###as flags -fcheck=pointer e -fcheck=recursive (inclusas no -fcheck=all) estavam gerando problemas no gdb
 
 #trap
 trap_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,denormal
