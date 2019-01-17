@@ -26,22 +26,29 @@
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# mode: pode mudar aqui para fast ou trap se quiser usar os modos de código acelerado (e sem rastreamento de erros) ou modo trap (com detecção de infinity, nan, etc,...)
+
+mode ?= debug
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Arquivos e receitas do projeto:
 
 ## Receita para o programa final:
-bin/main.elf: obj/main.o obj/module1.o
+$(mode)/bin/main.elf: $(mode)/obj/main.o $(mode)/obj/module1.o
 	make version
-	$(LINKER) $(FLOPTS) $^ -o $@
+	$(LINKER) $(LINK_OPTS) $^ -o $@
 
 ## Receita para cada objeto:
-obj/main.o: src/main.f90 obj/module1.o Makefile
-	$(COMPILER) $(FCOPTS) -Jobj -c $< -o $@
+$(mode)/obj/main.o: src/main.f90 $(mode)/obj/module1.o Makefile
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
 
-obj/module1.o: src/module1.f90 Makefile
-	$(COMPILER) $(FCOPTS) -Jobj -c $< -o $@
+$(mode)/obj/module1.o: src/module1.f90 Makefile
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
 
-#obj/module2.o: src/module2.f90 obj/module1.o Makefile
-#	$(COMPILER) $(FCOPTS) -Jobj -c $< -o $@
+#$(mode)/obj/module2.o: src/module2.f90 $(mode)/obj/module1.o Makefile
+#	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -49,15 +56,14 @@ obj/module1.o: src/module1.f90 Makefile
 # Makefile keywords
 
 build: .FORCE
-	make bin/main.elf mode=$(mode)
-	#done
+	make $(mode)/bin/main.elf mode=$(mode)
 
 run: .FORCE
-	make bin/main.elf mode=$(mode)
-	./bin/main.elf
+	make $(mode)/bin/main.elf mode=$(mode)
+	$(mode)/bin/main.elf
 
 debug: .FORCE
-	make bin/main.elf mode=DEBUG
+	make debug/bin/main.elf mode=debug
 	# - - - - - - - - - - - - - - - - - - - - - - - #
 	# gdb CheatSheet:                               #
 	#                                               #
@@ -71,22 +77,22 @@ debug: .FORCE
 	# > q #(quit)                                   #
 	#                                               #
 	# > - - - - - - - - - - - - - - - - - - - - - - #
-	gdb bin/main.elf
+	gdb debug/bin/main.elf
 
 memcheck: .FORCE
-	make bin/main.elf mode=DEBUG
-	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes bin/main.elf
+	make debug/bin/main.elf mode=debug
+	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes debug/bin/main.elf
 
 clean: .FORCE
-	rm -f bin/*.elf
-	rm -f obj/*.o
-	rm -f obj/*.mod
-	rm -f bin/version.txt
+	rm -f $(mode)/bin/*.elf
+	rm -f $(mode)/obj/*.o
+	rm -f $(mode)/obj/*.mod
+	rm -f $(mode)/bin/version.txt
 
 version: .FORCE
-	git log -1 --pretty=format:"commit %H%n" > bin/version.txt #hash
-	git log -1 --pretty=format:"Date: %ad%n" >> bin/version.txt #date
-	git status -sb >> bin/version.txt #status
+	git log -1 --pretty=format:"commit %H%n" > $(mode)/bin/version.txt #hash
+	git log -1 --pretty=format:"Date: %ad%n" >> $(mode)/bin/version.txt #date
+	git status -sb >> $(mode)/bin/version.txt #status
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -98,36 +104,45 @@ COMPILER = gfortran
 LINKER = gfortran
 
 #flags for each mode
-BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g
+BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts
 
-DEBUG_OPTS = -O0 -fcheck=all
+debug_OPTS = -O0 -fcheck=all -fbacktrace
 
-TRAP_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,precision,denormal
+#trap
+trap_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,denormal
+##> ‘invalid’ (invalid floating point operation, such as SQRT(-1.0)),
+##> ‘zero’ (division by zero),
+##> ‘overflow’ (overflow in a floating point operation),
+##> ‘underflow’ (underflow in a floating point operation),
+##> ‘inexact’ (loss of precision during operation), and
+##> ‘denormal’ (operation performed on a denormal value). 
+## The first three exceptions (‘invalid’, ‘zero’, and ‘overflow’) often indicate serious errors, and unless the program has provisions for dealing with these exceptions, enabling traps for these three exceptions is probably a good idea. 
+### (https://gcc.gnu.org/onlinedocs/gfortran/Debugging-Options.html)
 
-FAST_OPTS = -O3 -march=native -m64 -Ofast
+#fast
+fast_OPTS = -march=native -Ofast -fno-backtrace
+### (https://wiki.gentoo.org/wiki/GCC_optimization/pt-br)
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Lógica de seleção de modos de construção
 
-#default mode
-mode ?= DEBUG
 #selection
-ifeq ($(mode),DEBUG)
-  FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS)
-  LINK_OPTS = -fbacktrace
-else ifeq ($(mode),TRAP)
-  FCOPTS = $(BASIC_OPTS) $(DEBUG_OPTS) $(TRAP_OPTS)
-  LINK_OPTS = -fbacktrace
-else ifeq ($(mode),FAST)
-  FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
-  LINK_OPTS =
-else ifeq ($(mode),RELEASE)
-  FCOPTS = $(BASIC_OPTS) $(FAST_OPTS)
+ifeq ($(mode),debug)
+  FCOPTS = $(BASIC_OPTS) $(debug_OPTS)
+  LINK_OPTS = 
+else ifeq ($(mode),trap)
+  FCOPTS = $(BASIC_OPTS) $(debug_OPTS) $(trap_OPTS)
+  LINK_OPTS = 
+else ifeq ($(mode),fast)
+  FCOPTS = $(BASIC_OPTS) $(fast_OPTS)
+  LINK_OPTS = 
+else ifeq ($(mode),release)
+  FCOPTS = $(BASIC_OPTS) $(fast_OPTS)
   LINK_OPTS = -static
 else
-  $(error mode value - "mode=DEBUG" or "mode=FAST" or "mode=TRAP")
+  $(error mode value - "mode=debug" or "mode=fast" or "mode=trap")
 endif
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
