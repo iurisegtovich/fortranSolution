@@ -1,12 +1,18 @@
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Instruções
 
+# O programa make:
+
 # Para executar as receitas e construir o programa basta digitar
 ## make
+
+# Opção recompilar do make:
 
 # Para forçar recompilar todos os arquivos do projeto,
 # independentemente da verificação de hora de modificação
 ## make -B
+
+# Funções preparadas nesse arquivo:
 
 # Para apagar todos os arquivos objeto temporários e programa final
 ## make clean
@@ -20,15 +26,14 @@
 # Para (re-)compilar e rodar o programa no modo de debug step-by-step
 ## make debug
 
-# Para (re-)compilar e rodar o programa no modo de debug step-by-step
-## make debug
-
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # mode: pode mudar aqui para fast ou trap se quiser usar os modos de código acelerado (e sem rastreamento de erros) ou modo trap (com detecção de infinity, nan, etc,...)
 
-mode ?= debug
+## make run mode=debug
+## make run mode=trap
+## make run mode=fast
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -129,7 +134,7 @@ fast_OPTS = -march=native -Ofast -fno-backtrace
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Lógica de seleção de modos de construção
-
+mode ?= debug
 #selection
 ifeq ($(mode),debug)
   FCOPTS = $(BASIC_OPTS) $(debug_OPTS)
