@@ -38,22 +38,25 @@
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+#bibliotecas
+libGSLDIR=/usr/lib
+
 # Arquivos e receitas do projeto:
 
 ## Receita para o programa final:
-$(mode)/bin/main.elf: $(mode)/obj/main.o $(mode)/obj/module1.o
+$(mode)/bin/main.elf: .FORCE
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/ziggurat.f90 -o $(mode)/obj/ziggurat.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/modelos.f90 -o $(mode)/obj/modelos.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/calcula.f90 -o $(mode)/obj/calcula.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/enxame.f90 -o $(mode)/obj/enxame.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/regres.f90 -o $(mode)/obj/regres.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/estima.f90 -o $(mode)/obj/estima.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/modelo1.f90 -o $(mode)/obj/modelo1.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $^ -o $@
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -I$(libGSLDIR) -lgsl -lgslcblas
 
-## Receita para cada objeto:
-$(mode)/obj/main.o: src/main.f90 $(mode)/obj/module1.o Makefile
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
-
-$(mode)/obj/module1.o: src/module1.f90 Makefile
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
-
-#$(mode)/obj/module2.o: src/module2.f90 $(mode)/obj/module1.o Makefile
-#	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -65,6 +68,7 @@ build: .FORCE
 	make $(mode)/bin/main.elf mode=$(mode)
 
 run: .FORCE
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(libGSLDIR)
 	make $(mode)/bin/main.elf mode=$(mode)
 	$(mode)/bin/main.elf
 
@@ -110,7 +114,7 @@ COMPILER = gfortran
 LINKER = gfortran
 
 #flags for each mode
-BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts
+BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts -fall-intrinsics
 
 debug_OPTS = -O0 -fbacktrace -fcheck=bounds -fcheck=array-temps -fcheck=do -fcheck=mem
 ###as flags -fcheck=pointer e -fcheck=recursive (inclusas no -fcheck=all) estavam gerando problemas no gdb

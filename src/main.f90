@@ -1,33 +1,28 @@
-PROGRAM main
+program main_estima
+!
+	use estima_mod
+	use modelo1_mod										!ESPECIFICAR MODELO
+	!use modelos_mod !implicito pela cadeia de uso
 
-  use iso_fortran_env, ONLY: REAL64, output_unit
+	implicit none
+	integer :: i
+	character(100) :: string
+		integer, intrinsic :: TIME
+	!inicializa gerador de números aleatórios
+	CALL zigset( TIME()**2 ); hasseed = 1
+!
+	!inicializa as classes do modelo, se pertinente
+	nMOD = 1
+	allocate(lista_de_modelos(nMOD))
+	allocate(lista_de_modelos(1)%modelo, source = i_modelo_1())				!ESPECIFICAR MODELO				!ESPECIFICAR MODELO
+	!
+	noreport = 0
 
-  use module1
-
-  integer :: i
-  real(REAL64) :: X
-  
-  i=2
-  x=3.d0
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
-  
-  call subS1(j=i,y=x)
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
-  
-  call subM1S1(k=i,z=x)
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
-
-CONTAINS
-
-  subroutine subS1(j,y)
-    integer, intent(in) :: j
-    real(REAL64), intent(out) :: y
-    write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', j, y
-    y = 2.d0**j
-    write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', j, y
-  end subroutine
-  
-END PROGRAM main
+	call estima
+!	call chama_modelo
+	!
+	print *, ''; print *, ''; print *, '##### Execucao Concluida #####'; print *, ''; print *, ''
+	!
+	contains
+	
+end program main_estima
