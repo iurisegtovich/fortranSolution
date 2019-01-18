@@ -143,8 +143,9 @@ ak(0:20,2) = (/0.628023320520852d0, -0.028796057604906d0,0.006519840398744d0,			
 0.000087294451594d0, 0.000034682122751d0, -0.000003548684306d0, -0.000000250453880d0,	&
 0.000000080779570d0, 0.000000004558555d0, -0.000000002849257d0, 0.000000000237816d0/)
 
-!bk(21:22)=0. originally used uninitialized variables, caught by valgrind, should these be set to zero, according to theory?
-!dk(21:22)=0. originally used uninitialized variables, caught by valgrind, should these be set to zero, according to theory?
+bk(21:22)=0. 
+dk(21:22)=0.
+!Originally used uninitialized variables, caught by valgrind, should these be set to zero, according to theory: pitzer, ACTIVITY COEFFICIENTS IN ELCTROLYTE SOLUTIONS, 1991 (PAG 125)
 
 !zCa = +2; zNa = +1 and zSO4 = -2; zCl = 1
 !so if M is Ca or SO4 and N is Na or Cl,
