@@ -6,3 +6,6 @@
 
 output/**
 !output/README.md
+
+gsl/**
+!gsl/README.md

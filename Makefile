@@ -40,7 +40,7 @@
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #bibliotecas
-libGSLDIR=/usr/lib
+libGSLDIR=gsl
 
 # Arquivos e receitas do projeto:
 
@@ -55,7 +55,7 @@ $(mode)/bin/main.elf: .FORCE
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/modelo1.f90 -o $(mode)/obj/modelo1.o
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -I$(libGSLDIR) -lgsl -lgslcblas
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libGSLDIR) -lgsl -lgslcblas
 
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
