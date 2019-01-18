@@ -125,8 +125,6 @@ REAL(REAL64),PARAMETER :: Aphi = 0.392
 REAL(REAL64),DIMENSION(0:20,2) :: ak
 REAL(REAL64),DIMENSION(0:22) :: bk,dk
 
-print*,(I)
-
 !array ak values are from Pitzer (1991) Table B-1, and copied from file phrqpitz.for
 !in the USGS phrqptz distribution
 
@@ -144,6 +142,9 @@ ak(0:20,2) = (/0.628023320520852d0, -0.028796057604906d0,0.006519840398744d0,			
 -0.036552745910311d0, -0.001668087945272d0, 0.001130378079086d0, -0.000887171310131d0,	&
 0.000087294451594d0, 0.000034682122751d0, -0.000003548684306d0, -0.000000250453880d0,	&
 0.000000080779570d0, 0.000000004558555d0, -0.000000002849257d0, 0.000000000237816d0/)
+
+!bk(21:22)=0. originally used uninitialized variables, caught by valgrind, should these be set to zero, according to theory?
+!dk(21:22)=0. originally used uninitialized variables, caught by valgrind, should these be set to zero, according to theory?
 
 !zCa = +2; zNa = +1 and zSO4 = -2; zCl = 1
 !so if M is Ca or SO4 and N is Na or Cl,
@@ -202,7 +203,6 @@ Etheta = (2.0d0/(4.0d0*I)) * (JMN - 0.5d0*JMM - 0.5d0*JNN)
 Ethetap = -(Etheta/I) + (2.0d0/(8.0d0*I**2))*(xMN*JpMN - 0.5d0*xMM*JpMM - 0.5d0*xNN*JpNN)
 ! HW(A3)
 
-print*, Etheta, Ethetap
 END SUBROUTINE mixing
   
 END MODULE
