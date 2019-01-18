@@ -1,33 +1,17 @@
-PROGRAM main
+program main
 
-  use iso_fortran_env, ONLY: REAL64, output_unit
+implicit none
 
-  use module1
+REAL(8) :: mNa, mCl, mSO4, mCa
+REAL(8):: gamma_Ca, gamma_SO4
 
-  integer :: i
-  real(REAL64) :: X
-  
-  i=2
-  x=3.d0
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
-  
-  call subS1(j=i,y=x)
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
-  
-  call subM1S1(k=i,z=x)
-  
-  write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', i, x
+mNa = 2
+mCa = 1
+mSO4 = 1
+mCl = 2
 
-CONTAINS
+call pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4)
+print*, gamma_Ca
+print *, gamma_SO4
 
-  subroutine subS1(j,y)
-    integer, intent(in) :: j
-    real(REAL64), intent(out) :: y
-    write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', j, y
-    y = 2.d0**j
-    write(*,'(A,A,I0.0,A,I0.0,ES12.4)') __FILE__,':',__LINE__, ' -> ', j, y
-  end subroutine
-  
-END PROGRAM main
+end program
