@@ -1,5 +1,5 @@
 program main
-
+use module1
 implicit none
 
 REAL(8) :: mNa, mCl, mSO4, mCa

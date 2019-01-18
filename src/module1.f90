@@ -11,29 +11,28 @@ SUBROUTINE pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4)
 
 IMPLICIT none
 
-REAL,INTENT(in) :: mNa, mCl, mSO4, mCa
-REAL,INTENT(out):: gamma_Ca, gamma_SO4
-REAL :: v, w, y, f_gamma, Z, F, IS, ISp
-REAL :: phi_NaCa, phip_NaCa, phiphi_NaCa, Etheta, Ethetap
-REAL :: phi_ClSO4, phip_ClSO4, phiphi_ClSO4
-REAL :: term1, term1a, term1b, term2, term3
-REAL :: term4, term5, term6, term7, term8, term9
-REAL :: terma, termb, termc, termd
-REAL :: CNaCl, CNaSO4, CCaCl, CCaSO4
-REAL :: ln_gamma_Ca, ln_gamma_SO4, osmotic, sum_m
+REAL(REAL64),INTENT(in) :: mNa, mCl, mSO4, mCa
+REAL(REAL64),INTENT(out):: gamma_Ca, gamma_SO4
+REAL(REAL64) :: v, w, y, f_gamma, Z, F, IS, ISp
+REAL(REAL64) :: phi_NaCa, phip_NaCa, phiphi_NaCa, Etheta, Ethetap
+REAL(REAL64) :: phi_ClSO4, phip_ClSO4, phiphi_ClSO4
+REAL(REAL64) :: term1, term1a, term1b, term2, term3
+REAL(REAL64) :: term4, term5, term6, term7, term8, term9
+REAL(REAL64) :: terma, termb, termc, termd
+REAL(REAL64) :: CNaCl, CNaSO4, CCaCl, CCaSO4
+REAL(REAL64) :: ln_gamma_Ca, ln_gamma_SO4, osmotic, sum_m
 !parameter data are from Harvier & Weare (1980).
-REAL,PARAMETER :: Aphi = 0.392, b = 1.2
-REAL,PARAMETER :: alpha = 2.0, alpha1 = 1.4, alpha2 = 12.0
-REAL,PARAMETER :: theta_NaCa = 0.07, theta_ClSO4 = 0.02
-REAL,PARAMETER :: psi_NaCaCl = -0.014, psi_NaCaSO4 = -0.023
-REAL,PARAMETER :: psi_ClSO4Na = 0.0014, psi_ClSO4Ca = 0.0
-REAL,PARAMETER :: CphiNaCl = 0.00127, CphiNaSO4 = 0.00497, CphiCaCl = -0.00034, CphiCaSO4 = 0.0
-REAL,DIMENSION(3),PARAMETER :: BNaCl(3)= [0.07650, 0.2664, 0.0]
-REAL,DIMENSION(3),PARAMETER :: BNaSO4(3) = [0.01958, 1.1130, 0.0]
-REAL,DIMENSION(3),PARAMETER :: BCaCl(3) = [0.31590, 1.6140, 0.0]
-REAL,DIMENSION(3),PARAMETER :: BCaSO4(3) = [0.20000, 2.6500, -57.70]
+REAL(REAL64),PARAMETER :: Aphi = 0.392, b = 1.2
+REAL(REAL64),PARAMETER :: alpha = 2.0, alpha1 = 1.4, alpha2 = 12.0
+REAL(REAL64),PARAMETER :: theta_NaCa = 0.07, theta_ClSO4 = 0.02
+REAL(REAL64),PARAMETER :: psi_NaCaCl = -0.014, psi_NaCaSO4 = -0.023
+REAL(REAL64),PARAMETER :: psi_ClSO4Na = 0.0014, psi_ClSO4Ca = 0.0
+REAL(REAL64),PARAMETER :: CphiNaCl = 0.00127, CphiNaSO4 = 0.00497, CphiCaCl = -0.00034, CphiCaSO4 = 0.0
+REAL(REAL64),DIMENSION(3),PARAMETER :: BNaCl(3)= [0.07650, 0.2664, 0.0]
+REAL(REAL64),DIMENSION(3),PARAMETER :: BNaSO4(3) = [0.01958, 1.1130, 0.0]
+REAL(REAL64),DIMENSION(3),PARAMETER :: BCaCl(3) = [0.31590, 1.6140, 0.0]
+REAL(REAL64),DIMENSION(3),PARAMETER :: BCaSO4(3) = [0.20000, 2.6500, -57.70]
 
-EXTERNAL mixing
 
 !SOME PRELIMINARIES:
 !===================
@@ -101,12 +100,12 @@ CONTAINS
 function g(x)
 
 IMPLICIT none
-REAL :: g,x
+REAL(REAL64) :: g,x
 g = 2*(1-(1+x)*exp(-x))/x**2
 END function g
 function gp(x)
 IMPLICIT none
-REAL :: gp,x
+REAL(REAL64) :: gp,x
 gp = -2*(1-(1+x+x**2/2)*exp(-x))/x**2
 END function gp
 
@@ -118,14 +117,15 @@ SUBROUTINE mixing(I,Etheta,Ethetap)
 
 IMPLICIT none
 
-REAL,INTENT(in) :: I
-REAL,INTENT(out) :: Etheta,Ethetap
+REAL(REAL64),INTENT(in) :: I
+REAL(REAL64),INTENT(out) :: Etheta,Ethetap
 INTEGER :: m,k
-INTEGER,PARAMETER :: dp = kind(1.0D0)
-REAL(DP) :: x,xMN,xMM,xNN,z,dzdx,JMN,JMM,JNN,JpMN,JpMM,JpNN
-REAL(DP),PARAMETER :: Aphi = 0.392
-REAL(DP),DIMENSION(0:20,2) :: ak
-REAL(DP),DIMENSION(0:22) :: bk,dk
+REAL(REAL64) :: x,xMN,xMM,xNN,z,dzdx,JMN,JMM,JNN,JpMN,JpMM,JpNN
+REAL(REAL64),PARAMETER :: Aphi = 0.392
+REAL(REAL64),DIMENSION(0:20,2) :: ak
+REAL(REAL64),DIMENSION(0:22) :: bk,dk
+
+print*,(I)
 
 !array ak values are from Pitzer (1991) Table B-1, and copied from file phrqpitz.for
 !in the USGS phrqptz distribution
@@ -201,6 +201,8 @@ Etheta = (2.0d0/(4.0d0*I)) * (JMN - 0.5d0*JMM - 0.5d0*JNN)
 ! HW(A2)
 Ethetap = -(Etheta/I) + (2.0d0/(8.0d0*I**2))*(xMN*JpMN - 0.5d0*xMM*JpMM - 0.5d0*xNN*JpNN)
 ! HW(A3)
+
+print*, Etheta, Ethetap
 END SUBROUTINE mixing
   
 END MODULE
