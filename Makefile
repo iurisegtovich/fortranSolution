@@ -68,9 +68,8 @@ build: .FORCE
 	make $(mode)/bin/main.elf mode=$(mode)
 
 run: .FORCE
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(libGSLDIR)
 	make $(mode)/bin/main.elf mode=$(mode)
-	$(mode)/bin/main.elf
+	(export PATH=$$PATH:$(libGSLDIR); echo $$PATH; $(mode)/bin/main.elf)
 
 debug: .FORCE
 	make debug/bin/main.elf mode=debug
