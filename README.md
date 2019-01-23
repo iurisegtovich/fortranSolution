@@ -38,3 +38,7 @@ change origin
 $ git remote add origin https://gitXXX.com/YOURUSERNAME/YOURPROJECT.git
 $ git push -u origin master
 
+# obs
+> branch master has a template that is simplified with no dependency checks
+> branch withDependency has a template with dependency checks (requires different dir for each mode)
+

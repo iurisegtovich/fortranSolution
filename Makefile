@@ -41,35 +41,35 @@
 # Arquivos e receitas do projeto:
 
 ## Receita para o programa final:
-$(mode)/bin/main.elf: $(mode)/obj/main.o $(mode)/obj/module1.o
+bin/main.elf: .FORCE
+	make clean
 	make version
-	$(LINKER) $(LINK_OPTS) $^ -o $@
-
-## Receita para cada objeto:
-$(mode)/obj/main.o: src/main.f90 $(mode)/obj/module1.o Makefile
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
-
-$(mode)/obj/module1.o: src/module1.f90 Makefile
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
-
-#$(mode)/obj/module2.o: src/module2.f90 $(mode)/obj/module1.o Makefile
-#	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c $< -o $@
+	$(COMPILER) $(FCOPTS) -Jobj -c src/module1.f90 -o obj/module1.o
+	$(COMPILER) $(FCOPTS) -Jobj -c src/main.f90 -o obj/main.o
+	$(LINKER) $(LINK_OPTS) obj/*.o -o $@
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Makefile keywords
 
+#CONFIGURATIONS
+#default target keyword
+.DEFAULT_GOAL := build
+
+# phony target .FORCE to force executing keyword recipes ignoring like-named files
+.PHONY: .FORCE
+
+#KEYWORDS
 build: .FORCE
-	make $(mode)/bin/main.elf mode=$(mode)
+	make bin/main.elf mode=$(mode)
 
 run: .FORCE
-	make $(mode)/bin/main.elf mode=$(mode)
-	$(mode)/bin/main.elf
+	make bin/main.elf mode=$(mode)
+	bin/main.elf
 
 debug: .FORCE
-	make debug/bin/main.elf mode=debug
+	make bin/main.elf mode=debug
 	# - - - - - - - - - - - - - - - - - - - - - - - #
 	# gdb CheatSheet:                               #
 	#                                               #
@@ -83,22 +83,22 @@ debug: .FORCE
 	# > q #(quit)                                   #
 	#                                               #
 	# > - - - - - - - - - - - - - - - - - - - - - - #
-	gdb debug/bin/main.elf
+	gdb bin/main.elf
 
 memcheck: .FORCE
-	make debug/bin/main.elf mode=debug
-	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes debug/bin/main.elf
+	make bin/main.elf mode=debug
+	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes bin/main.elf
 
 clean: .FORCE
-	rm -f $(mode)/bin/*.elf
-	rm -f $(mode)/obj/*.o
-	rm -f $(mode)/obj/*.mod
-	rm -f $(mode)/bin/version.txt
+	rm -f bin/*.elf
+	rm -f obj/*.o
+	rm -f obj/*.mod
+	rm -f bin/version.txt
 
 version: .FORCE
-	git log -1 --pretty=format:"commit %H%n" > $(mode)/bin/version.txt #hash
-	git log -1 --pretty=format:"Date: %ad%n" >> $(mode)/bin/version.txt #date
-	git status -sb >> $(mode)/bin/version.txt #status
+	git log -1 --pretty=format:"commit %H%n" > bin/version.txt #hash
+	git log -1 --pretty=format:"Date: %ad%n" >> bin/version.txt #date
+	git status -sb >> bin/version.txt #status
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -154,13 +154,3 @@ endif
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# Configurações globais para as regras de construção
-
-#default target keyword
-.DEFAULT_GOAL := build
-
-# phony target .FORCE to force executing keyword recipes ignoring like-named files
-.PHONY: .FORCE
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
