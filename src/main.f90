@@ -1,5 +1,7 @@
 program main
 
+	use iso_c_binding
+
         integer, parameter :: N = 1000
 
         real(8) :: in(N)
@@ -8,7 +10,7 @@ program main
 
         integer(8) :: plan
         
-        integer(8) :: FFTW_ESTIMATE !?
+	integer :: FFTW_ESTIMATE !see notes
 
         print*, out
 
