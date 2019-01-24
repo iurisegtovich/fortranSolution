@@ -1,28 +1,23 @@
-program main_estima
-!
-	use estima_mod
-	use modelo1_mod										!ESPECIFICAR MODELO
-	!use modelos_mod !implicito pela cadeia de uso
+program main
 
-	implicit none
-	integer :: i
-	character(100) :: string
-		integer, intrinsic :: TIME
-	!inicializa gerador de números aleatórios
-	CALL zigset( TIME()**2 ); hasseed = 1
-!
-	!inicializa as classes do modelo, se pertinente
-	nMOD = 1
-	allocate(lista_de_modelos(nMOD))
-	allocate(lista_de_modelos(1)%modelo, source = i_modelo_1())				!ESPECIFICAR MODELO				!ESPECIFICAR MODELO
-	!
-	noreport = 0
+        integer, parameter :: N = 1000
 
-	call estima
-!	call chama_modelo
-	!
-	print *, ''; print *, ''; print *, '##### Execucao Concluida #####'; print *, ''; print *, ''
-	!
-	contains
+        real(8) :: in(N)
+
+        complex(8) :: out(N/2 + 1)
+
+        integer(8) :: plan
+        
+        integer(8) :: FFTW_ESTIMATE !?
+
+        print*, out
+
+        call dfftw_plan_dft_r2c_1d(plan,N,in,out,FFTW_ESTIMATE)
+        
+        call dfftw_execute_dft_r2c(plan, in, out)
+        
+        call dfftw_destroy_plan(plan)
 	
-end program main_estima
+	    print*, out
+	
+end program main

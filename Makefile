@@ -46,16 +46,9 @@ libGSLDIR=gsl
 
 ## Receita para o programa final:
 $(mode)/bin/main.elf: .FORCE
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/ziggurat.f90 -o $(mode)/obj/ziggurat.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/modelos.f90 -o $(mode)/obj/modelos.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/calcula.f90 -o $(mode)/obj/calcula.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/enxame.f90 -o $(mode)/obj/enxame.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/regres.f90 -o $(mode)/obj/regres.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/estima.f90 -o $(mode)/obj/estima.o
-	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/modelo1.f90 -o $(mode)/obj/modelo1.o
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libGSLDIR) -lgsl -lgslcblas
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libGSLDIR) -lfftw3
 
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
