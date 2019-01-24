@@ -1,9 +1,8 @@
 MODULE module1
-  use iso_fortran_env, ONLY: REAL64, output_unit
 
-  integer :: mi
-  real(REAL64) :: mx
-
-CONTAINS
+  use, intrinsic :: iso_c_binding
+  
+#include "fftw3.f03"
+!from /usr/local/include/fftw3.f03
   
 END MODULE
