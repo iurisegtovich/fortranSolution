@@ -40,7 +40,7 @@
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #bibliotecas
-libNLOPTDIR=nlopt
+libNLOPTDIR=/usr/local/lib
 
 # Arquivos e receitas do projeto:
 
@@ -49,7 +49,7 @@ $(mode)/bin/main.elf: .FORCE
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/module1.f90 -o $(mode)/obj/module1.o
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libNLOPTDIR) -lmynlopt
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libNLOPTDIR) -lnlopt
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
