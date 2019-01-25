@@ -40,7 +40,7 @@
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #bibliotecas
-libFFTWDIR=fftw
+libNLOPTDIR=nlopt
 
 # Arquivos e receitas do projeto:
 
@@ -49,7 +49,7 @@ $(mode)/bin/main.elf: .FORCE
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/module1.f90 -o $(mode)/obj/module1.o
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libFFTWDIR) -lfftw3
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libNLOPTDIR) -lmynlopt
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -62,7 +62,7 @@ build: .FORCE
 
 run: .FORCE
 	make $(mode)/bin/main.elf mode=$(mode)
-	(export PATH=$$PATH:$(libFFTWDIR); echo $$PATH; $(mode)/bin/main.elf)
+	(export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(libNLOPTDIR); echo $$LD_LIBRARY_PATH; export PATH=$$PATH:$(libNLOPTDIR); echo $$PATH; $(mode)/bin/main.elf)
 
 debug: .FORCE
 	make debug/bin/main.elf mode=debug
