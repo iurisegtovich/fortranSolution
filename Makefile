@@ -40,16 +40,16 @@
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #bibliotecas
-libGSLDIR=gsl
+libFFTWDIR=fftw
 
 # Arquivos e receitas do projeto:
 
 ## Receita para o programa final:
 $(mode)/bin/main.elf: .FORCE
-	$(COMPILER) $(FIOPTS) -J$(mode)/obj -c src/module1.f90 -o $(mode)/obj/module1.o
+	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/module1.f90 -o $(mode)/obj/module1.o
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libGSLDIR) -lfftw3
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -L$(libFFTWDIR) -lfftw3
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -62,7 +62,7 @@ build: .FORCE
 
 run: .FORCE
 	make $(mode)/bin/main.elf mode=$(mode)
-	(export PATH=$$PATH:$(libGSLDIR); echo $$PATH; $(mode)/bin/main.elf)
+	(export PATH=$$PATH:$(libFFTWDIR); echo $$PATH; $(mode)/bin/main.elf)
 
 debug: .FORCE
 	make debug/bin/main.elf mode=debug
@@ -125,9 +125,6 @@ trap_OPTS = -ffpe-trap=invalid,zero,overflow,underflow,denormal
 #fast
 fast_OPTS = -march=native -Ofast -fno-backtrace
 ### (https://wiki.gentoo.org/wiki/GCC_optimization/pt-br)
-
-FIOPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -fimplicit-none -g
-#for complete include files of interfacing with external libraries.
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
