@@ -70,24 +70,11 @@ run: .FORCE
 
 debug: .FORCE
 	make bin/main.elf mode=debug
-	# - - - - - - - - - - - - - - - - - - - - - - - #
-	# gdb CheatSheet:                               #
-	#                                               #
-	# > start                                       #
-	# > s                 #(step)                   #
-	# > break main.f90:15 #(set breakpoint)         #
-	# > c                 #(continue)               #
-	# > n                 #(next)                   #
-	# > p x               #(print x)                #
-	# > finish #(step out)                          #
-	# > q #(quit)                                   #
-	#                                               #
-	# > - - - - - - - - - - - - - - - - - - - - - - #
 	gdb bin/main.elf
 
 memcheck: .FORCE
 	make bin/main.elf mode=debug
-	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes bin/main.elf
+	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes --show-leak-kinds=all bin/main.elf)
 
 clean: .FORCE
 	rm -f bin/*.elf
@@ -112,7 +99,7 @@ LINKER = gfortran
 #flags for each mode
 BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts
 
-debug_OPTS = -O0 -fbacktrace -fcheck=bounds -fcheck=array-temps -fcheck=do -fcheck=mem
+debug_OPTS = -O0 -fbacktrace -fcheck=bounds -fcheck=array-temps -fcheck=do -fcheck=mem -DDEBUG
 ###as flags -fcheck=pointer e -fcheck=recursive (inclusas no -fcheck=all) estavam gerando problemas no gdb
 
 #trap
