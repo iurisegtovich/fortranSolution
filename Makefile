@@ -74,7 +74,7 @@ debug: .FORCE
 
 memcheck: .FORCE
 	make bin/main.elf mode=debug
-	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes --show-leak-kinds=all bin/main.elf)
+	valgrind --gen-suppressions=yes --leak-check=full --track-origins=yes --show-leak-kinds=all bin/main.elf
 
 clean: .FORCE
 	rm -f bin/*.elf
