@@ -43,7 +43,6 @@
 ## Receita para o programa final:
 bin/main.elf: .FORCE
 	make clean
-	make version
 	$(COMPILER) $(FCOPTS) -Jobj -c src/module1.f90 -o obj/module1.o
 	$(COMPILER) $(FCOPTS) -Jobj -c src/main.f90 -o obj/main.o
 	$(LINKER) $(LINK_OPTS) obj/*.o -o $@
@@ -97,7 +96,44 @@ COMPILER = gfortran
 LINKER = gfortran
 
 #flags for each mode
-BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g -pedantic -std=f2008ts
+BASIC_OPTS = -cpp -fmax-errors=1 -ffree-line-length-0 -Wall -Wextra -fimplicit-none -g
+##> -pedantic -std=f2008ts
+# Issue warnings for uses of extensions to Fortran 95.  -pedantic
+#           also applies to C-language constructs where they occur in GNU
+#           Fortran source files, such as use of \e in a character constant
+#           within a directive like "#include".
+#
+#           Valid Fortran 95 programs should compile properly with or without
+#           this option.  However, without this option, certain GNU extensions
+#           and traditional Fortran features are supported as well.  With this
+#           option, many of them are rejected.
+#
+#           Some users try to use -pedantic to check programs for conformance.
+#           They soon find that it does not do quite what they want---it finds
+#           some nonstandard practices, but not all.  However, improvements to
+#           GNU Fortran in this area are welcome.
+#
+#           This should be used in conjunction with -std=f95, -std=f2003 or
+#           -std=f2008.
+#
+#-std=std
+#           Specify the standard to which the program is expected to conform,
+#           which may be one of f95, f2003, f2008, gnu, or legacy.  The default
+#           value for std is gnu, which specifies a superset of the Fortran 95
+#           standard that includes all of the extensions supported by GNU
+#           Fortran, although warnings will be given for obsolete extensions
+#           not recommended for use in new code.  The legacy value is
+#           equivalent but without the warnings for obsolete extensions, and
+#           may be useful for old non-standard programs.  The f95, f2003 and
+#           f2008 values specify strict conformance to the Fortran 95, Fortran
+#           2003 and Fortran 2008 standards, respectively; errors are given for
+#           all extensions beyond the relevant language standard, and warnings
+#           are given for the Fortran 77 features that are permitted but
+#           obsolescent in later standards. -std=f2008ts allows the Fortran
+#           2008 standard including the additions of the Technical
+#           Specification (TS) 29113 on Further Interoperability of Fortran
+#           with C and TS 18508 on Additional Parallel Features in Fortran.
+
 
 debug_OPTS = -O0 -fbacktrace -fcheck=bounds -fcheck=array-temps -fcheck=do -fcheck=mem -DDEBUG
 ###as flags -fcheck=pointer e -fcheck=recursive (inclusas no -fcheck=all) estavam gerando problemas no gdb
