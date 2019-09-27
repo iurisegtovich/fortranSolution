@@ -68,12 +68,12 @@ program main
     integer ires
     call nlo_create(opt, NLOPT_LN_COBYLA, 2) !Constrained local derivative free
     call nlo_get_lower_bounds(ires, opt, lb)
-    lb(1) = 0.80
-    lb(2) = 0.8d0
+    lb(1) = -0.80
+    lb(2) = -0.8d0
     call nlo_set_lower_bounds(ires, opt, lb)
     call nlo_get_upper_bounds(ires, opt, ub)
-    ub(1) = 1.2d0
-    ub(2) = 1.2d0
+    ub(1) = 3.2d0
+    ub(2) = 3.2d0
     call nlo_set_upper_bounds(ires, opt, ub)
     ! Point to objective function
     call nlo_set_min_objective(ires, opt, objF, 0)
@@ -102,16 +102,17 @@ program main
     integer i
     val=0.
     print*, 'x',x
-    print*, 'val', val
-    do i = 1,size(x)
-      val = val+ x(i)**2
+    
+    do i = 1, 2!size(x) => c nao sabe size
+      val = val+ (x(i)-i)**2
     enddo
+print*, 'val', val
     end subroutine
    
        subroutine constraint(val, nvar, x, grad, need_gradient, d)
     integer need_gradient, nvar
     real(8) val, x(nvar), grad(nvar), d
-    val =  x(1)*x(2)
+    val =  -(x(1)+x(2)-2.5)
     end
    
   end program main
