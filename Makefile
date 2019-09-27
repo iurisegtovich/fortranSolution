@@ -49,7 +49,7 @@ $(mode)/bin/main.elf: .FORCE
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/module1.f90 -o $(mode)/obj/module1.o -I/c/Users/user/AppData/Local/Continuum/anaconda3/envs/emingw/Library/include
 	$(COMPILER) $(FCOPTS) -J$(mode)/obj -c src/main.f90 -o $(mode)/obj/main.o -I/c/Users/user/AppData/Local/Continuum/anaconda3/envs/emingw/Library/include
 	make version
-	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -LC:/Users/user/AppData/Local/Continuum/anaconda3/envs/emingw/Library/bin -lnlopt
+	$(LINKER) $(LINK_OPTS) $(mode)/obj/*.o -o $@ -LC:/Users/user/AppData/Local/Continuum/anaconda3/envs/emingw/Library/lib -lnlopt
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

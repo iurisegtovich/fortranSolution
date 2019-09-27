@@ -112,7 +112,7 @@ print*, 'val', val
        subroutine constraint(val, nvar, x, grad, need_gradient, d)
     integer need_gradient, nvar
     real(8) val, x(nvar), grad(nvar), d
-    val =  -(x(1)+x(2)-2.5)
+    val =  x(1)+x(2)-2.5
     end
    
   end program main
