@@ -3,20 +3,22 @@ use module1
 implicit none
 
 REAL(8) :: mNa, mCl, mSO4, mCa
-REAL(8):: gamma_Ca, gamma_SO4
+REAL(8):: gamma_Ca, gamma_SO4, ah2o
 
 mNa = 2
+mCl = 2
 mCa = 1
 mSO4 = 1
-mCl = 2
+
 
 call mixing(1.d0,gamma_Ca, gamma_SO4)
 print*, gamma_Ca, gamma_SO4 !sqn
 
 
-call pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4)
+call pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4,ah2o)
 print*, gamma_Ca
 print *, gamma_SO4
+print *, ah2o
 ! write(*,'(E26.16E3)') gamma_SO4
 ! write(*,'(G26.16E3)') gamma_SO4
 ! write(*,'(D26.16)') gamma_SO4

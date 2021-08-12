@@ -3,7 +3,7 @@ MODULE module1
 
 CONTAINS
 
-SUBROUTINE pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4)
+SUBROUTINE pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4,aH2O)
 
 !Uses the Pitzer equations to calculate the activity coefficients of Ca and SO4
 !and the activity of H2O in Ca-Na-Cl-SO4 solutions. Illustrates the use of the Pitzer equations.
@@ -12,7 +12,7 @@ SUBROUTINE pitzer(mNa,mCl,mCa,mSO4,gamma_Ca,gamma_SO4)
 IMPLICIT none
 
 REAL(REAL64),INTENT(in) :: mNa, mCl, mSO4, mCa
-REAL(REAL64),INTENT(out):: gamma_Ca, gamma_SO4
+REAL(REAL64),INTENT(out):: gamma_Ca, gamma_SO4,aH2O
 REAL(REAL64) :: v, w, y, f_gamma, Z, F, IS, ISp
 REAL(REAL64) :: phi_NaCa, phip_NaCa, phiphi_NaCa, Etheta, Ethetap
 REAL(REAL64) :: phi_ClSO4, phip_ClSO4, phiphi_ClSO4
@@ -74,18 +74,23 @@ term1a = mNa*mCa *phip_NaCa
 term1b = mCl*mSO4*phip_ClSO4
 f_gamma = -Aphi*((ISp/(1+b*ISp)) + (2/b)*(log(1+b*ISp)))
 F = f_gamma + term1 + term1a + term1b
+! print*, Etheta,Ethetap
 
+! print*, "F=",term1,term1a,term1b,F
 !ACTIVITY COEFFICIENT OF Ca:
 !===========================
 term2 = mCl *(2*(BCaCl(1) + BCaCl(2) *g(v)) + Z*CCaCl)+ mSO4*(2*(BCaSO4(1)+ BCaSO4(2)*g(w) + BCaSO4(3)*g(y)) + Z*CCaSO4)
-
+! print*, term2; stop
 term3 = mNa*(2*phi_NaCa + mCl*psi_NaCaCl + mSO4*psi_NaCaSO4)
+! print*, term3; stop
 term4 = mCl*mSO4*psi_ClSO4Ca
+! print*, term4; stop
 term5 = 2*(mNa*mCl*CNaCl + mNa*mSO4*CNaSO4 + mCa*mCl*CCaCl + mCa*mSO4*CCaSO4)
+! print*, term5; stop
 
 ln_gamma_Ca = 4*F + term2 + term3 + term4 + term5
 gamma_Ca = exp(ln_gamma_Ca)
-
+! print*, ln_gamma_Ca; stop
 !ACTIVITY COEFFICIENT OF SO4:
 !============================
 term6 = mNa*(2*(BNaSO4(1) + BNaSO4(2)*g(v)) + Z*CNaSO4)+ mCa*(2*(BCaSO4(1) + BCaSO4(2)*g(w) + BCaSO4(3)*g(y)) + Z*CCaSO4)
@@ -94,6 +99,30 @@ term8 = mNa*mCa*psi_NaCaSO4
 term9 = term5
 ln_gamma_SO4 = 4*F + term6 + term7 + term8 + term9
 gamma_SO4 = exp(ln_gamma_SO4)
+
+! print*, term6,term7,term8,term9,ln_gamma_SO4; stop
+! print*, mCl, phi_ClSO4, mNa, psi_ClSO4Na, mCa, psi_ClSO4Ca;
+! print*, ln_gamma_SO4; stop
+
+!OSMOTIC COEFFICIENT:
+!====================
+terma = -Aphi*IS**(1.5)/(1+b*ISp)
+termb = mNa*mCl  * (BNaCl(1) + BNaCl(2) *exp(-v)  + Z*CNaCl ) &
++ mNa*mSO4  * (BNaSO4(1)+ BNaSO4(2)*exp(-v)  + Z*CNaSO4) &
++ mCa*mCl * (BCaCl(1) + BCaCl(2) *exp(-v)  + Z*CCaCl ) &
++ mCa*mSO4 * (BCaSO4(1)+ BCaSO4(2)*exp(-w) + BCaSO4(3)*exp(-y) + Z*CCaSO4)
+
+termc = mNa*mCa*(phiphi_NaCa + mCl*psi_NaCaCl + mSO4*psi_NaCaSO4)
+
+termd = mCl*mSO4*(phiphi_ClSO4 + mNa*psi_ClSO4Na + mCa*psi_ClSO4Ca)
+
+osmotic = 1+(2/sum_m)*(terma + termb + termc + termd)
+
+aH2O = exp(-osmotic*sum_m/55.51)
+
+print*, terma,termb,termc,termd,aH2O
+
+
 
 
 CONTAINS
